@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin Dashboard</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background-color: #f8f9fa;
+    }
+    .container {
+      margin-top: 50px;
+    }
+    .card {
+      border-radius: 15px;
+    }
+    table {
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h2 class="text-center mb-4">Admin Dashboard</h2>
+  
+  <div class="card p-4">
+    <h5>User Management</h5>
+    <p id="user-count" class="text-muted"></p>
+
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th>Email</th>
+          <th>Username</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="user-table"></tbody>
+    </table>
+
+    <h6 class="mt-4">Create User</h6>
+    <div class="row g-2">
+      <div class="col-md-4">
+        <input type="text" id="new-username" class="form-control" placeholder="Username">
+      </div>
+      <div class="col-md-4">
+        <input type="email" id="new-email" class="form-control" placeholder="Email">
+      </div>
+      <div class="col-md-4">
+        <input type="password" id="new-password" class="form-control" placeholder="Password">
+      </div>
+    </div>
+    <button class="btn btn-primary mt-2" onclick="createUser()">Create</button>
+  </div>
+</div>
+
+<script>
+  async function fetchUsers() {
+    const res = await fetch('http://localhost:8000/admin/users');
+    const users = await res.json();
+    document.getElementById('user-count').textContent = `Total Users: ${users.length}`;
+
+    const table = document.getElementById('user-table');
+    table.innerHTML = '';
+    users.forEach(user => {
+      const row = document.createElement('tr');
+      row.innerHTML = `
+        <td>${user.email}</td>
+        <td>${user.username || ''}</td>
+        <td>
+          <button class="btn btn-sm btn-warning me-1" onclick="showUpdate('${user._id.$oid}', '${user.email}', '${user.username}')">Edit</button>
+          <button class="btn btn-sm btn-danger" onclick="deleteUser('${user._id.$oid}')">Delete</button>
+        </td>
+      `;
+      table.appendChild(row);
+    });
+  }
+
+  async function createUser() {
+    const email = document.getElementById('new-email').value;
+    const password = document.getElementById('new-password').value;
+    const username = document.getElementById('new-username').value;
+
+    const res = await fetch('http://localhost:8000/admin/create', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password, username })
+    });
+
+    const data = await res.json();
+    alert(data.message || data.detail);
+    fetchUsers();
+  }
+
+  function showUpdate(id, email, username) {
+    const newUsername = prompt('Update username:', username);
+    const newPassword = prompt('New password (leave blank to keep same):');
+
+    if (newUsername !== null) {
+      updateUser(id, email, newUsername, newPassword);
+    }
+  }
+
+  async function updateUser(id, email, username, password) {
+    const res = await fetch(`http://localhost:8000/admin/update/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, username, password })
+    });
+
+    const data = await res.json();
+    alert(data.message || data.detail);
+    fetchUsers();
+  }
+
+  async function deleteUser(id) {
+    if (confirm('Are you sure you want to delete this user?')) {
+      const res = await fetch(`http://localhost:8000/admin/delete/${id}`, {
+        method: 'DELETE'
+      });
+
+      const data = await res.json();
+      alert(data.message || data.detail);
+      fetchUsers();
+    }
+  }
+
+  fetchUsers();
+</script>
+</body>
+</html>

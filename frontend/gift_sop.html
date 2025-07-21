@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>GIFT SOP Checklist</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 font-sans p-6">
+  <div class="max-w-4xl mx-auto bg-white p-6 rounded-lg shadow-lg">
+    <h1 class="text-3xl font-bold text-blue-600 mb-6 text-center">📋 GIFT SOP Checklist</h1>
+
+    <!-- Section: Appends Run -->
+    <div class="mb-6">
+      <h2 class="text-xl font-semibold mb-2">🕒 Daily Runs</h2>
+      <div class="space-y-2">
+        <label class="flex items-center"><input type="checkbox" class="mr-2"> DAG: <b>gift_daily_data_appends</b> ran at 3:15 am on <b>192.168.0.121:8083</b></label>
+        <label class="flex items-center"><input type="checkbox" class="mr-2"> DAG: <b>gift_daily_data_appends</b> ran at 5:15 am</label>
+      </div>
+    </div>
+
+    <!-- Section: 6:00 AM -->
+    <div class="mb-6">
+      <h2 class="text-xl font-semibold mb-2">🕕 6:00 AM Tasks</h2>
+      <div class="space-y-2">
+        <label class="flex items-center"><input type="checkbox" class="mr-2"> GIFT Production Module initialized alert received on Google Space</label>
+        <label class="flex items-center"><input type="checkbox" class="mr-2"> No unexpected strategy removal logs present on Google Space</label>
+      </div>
+    </div>
+
+    <!-- Section: 6:30 AM -->
+    <div class="mb-6">
+      <h2 class="text-xl font-semibold mb-2">🕡 6:30 AM Tasks</h2>
+      <div class="space-y-2">
+        <label class="flex items-center"><input type="checkbox" class="mr-2"> 3 nodes of <b>startDatasnap</b> DAG running (Airflow: 192.168.30.15:18080)</label>
+        <label class="flex items-center"><input type="checkbox" class="mr-2"> 2 nodes of <b>start_scripts</b> DAG running</label>
+        <label class="flex items-center"><input type="checkbox" class="mr-2"> ⚠️ Alert: TraderID 398 logged in on 192.168.30.15 received on Teams</label>
+        <label class="flex items-center"><input type="checkbox" class="mr-2"> 📊 Check Grafana: Time difference from current should be ~3hrs</label>
+      </div>
+    </div>
+
+    <!-- Section: 4:30 PM -->
+    <div class="mb-6">
+      <h2 class="text-xl font-semibold mb-2">🕟 4:30 PM Tasks</h2>
+      <label class="flex items-center"><input type="checkbox" class="mr-2"> ⚠️ Alert: TraderID 398 logged in on 192.168.30.15 received on Teams</label>
+    </div>
+
+    <!-- Section: Alerts -->
+    <div class="mb-6">
+      <h2 class="text-xl font-semibold mb-2">⚠️ Alert Handling</h2>
+      <ul class="list-disc ml-6 space-y-1 text-gray-700">
+        <li>Ignore “Gift Execution Alert: ERROR, Connection with CTCL lost” between 3:15 am and 6:30 am</li>
+        <li>Receive NewOrderLogs and ExecutionLogs on Teams — validate trading</li>
+        <li>Ignore GIFT Datasnap alerts, but monitor other alerts on the Teams channel</li>
+        <li>Alert if <b>{'FUTIDX_GIFT'}</b> segment trades are missing in last 24 hrs — should show on Google Space</li>
+      </ul>
+    </div>
+
+    <!-- Section: References -->
+    <div class="mb-4 border-t pt-4">
+      <h2 class="text-xl font-semibold mb-2">🔗 Links & Tools</h2>
+      <ul class="list-disc ml-6 text-blue-600 space-y-1">
+        <li>Airflow (gift): <a href="http://192.168.0.121:8083" target="_blank">192.168.0.121:8083</a></li>
+        <li>Airflow (startDatasnap): <a href="http://192.168.30.15:18080" target="_blank">192.168.30.15:18080</a></li>
+        <li>Airflow (Balte): <a href="http://192.168.30.15:8099" target="_blank">192.168.30.15:8099</a></li>
+        <li>📨 Google Spaces: <a href="#" target="_blank">Gspace</a></li>
+      </ul>
+    </div>
+  </div>
+</body>
+</html>

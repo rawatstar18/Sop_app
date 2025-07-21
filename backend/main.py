@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from pymongo import MongoClient
 from backend.routes.user import user_router
+from backend.services.admin import addAdminIfNotFound
 import hashlib
 
 app = FastAPI()
@@ -40,3 +41,5 @@ async def login(data: LoginRequest):
     if not user or user["password"] != hash_password(data.password):
         raise HTTPException(status_code=401, detail="Invalid credentials")
     return {"message": "Login successful", "email": user["email"]}
+
+addAdminIfNotFound()
