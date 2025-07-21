@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Register</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- ✅ Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-gray-800 via-gray-900 to-black flex items-center justify-center">
+
+    <div class="bg-white rounded-2xl shadow-lg p-8 w-full max-w-sm">
+        <h2 class="text-2xl font-bold mb-6 text-center text-gray-800">Create Account</h2>
+        
+        <form id="register-form" class="space-y-4">
+            <div>
+                <label for="username" class="block text-gray-600">Username</label>
+                <input type="text" id="username" name="username" required
+                       class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
+            <div>
+                <label for="email" class="block text-gray-600">Email</label>
+                <input type="email" id="email" name="email" required
+                       class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
+            <div>
+                <label for="password" class="block text-gray-600">Password</label>
+                <input type="password" id="password" name="password" required
+                       class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
+            <button type="submit"
+                    class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition">
+                Register
+            </button>
+        </form>
+
+        <p class="mt-4 text-sm text-center text-gray-500">
+            Already have an account?
+            <a href="login.html" class="text-blue-500 hover:underline">Login here</a>
+        </p>
+    </div>
+
+    <!-- ✅ JavaScript -->
+    <script>
+        const form = document.getElementById("register-form");
+
+        form.addEventListener("submit", async (e) => {
+            e.preventDefault();
+
+            const formData = new FormData(form);
+
+            const response = await fetch("http://localhost:8000/register", {
+                method: "POST",
+                body: formData,
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                alert(data.message);
+                window.location.href = "login.html";  // redirect after success
+            } else {
+                alert(data.detail || "Registration failed");
+            }
+        });
+    </script>
+</body>
+</html>
