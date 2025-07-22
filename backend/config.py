@@ -1,5 +1,5 @@
 import os
-from typing import Optional
+from typing import List
 
 class Settings:
     # Database Configuration
@@ -8,15 +8,18 @@ class Settings:
     MONGO_USERNAME: str = os.getenv("MONGO_USERNAME", "admin")
     MONGO_PASSWORD: str = os.getenv("MONGO_PASSWORD", "admin")
     MONGO_DB_NAME: str = os.getenv("MONGO_DB_NAME", "appdb")
-    
+
     # Security
     SECRET_KEY: str = os.getenv("SECRET_KEY", "your-secret-key-change-in-production")
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
-    
+
     # CORS
-    ALLOWED_ORIGINS: list = ["http://localhost:8080", "http://127.0.0.1:8080"]
-    
+    @property
+    def ALLOWED_ORIGINS(self) -> List[str]:
+        origins = os.getenv("ALLOWED_ORIGINS", "http://localhost:8080,http://127.0.0.1:8080")
+        return [origin.strip() for origin in origins.split(",")]
+
     @property
     def mongo_url(self) -> str:
         return f"mongodb://{self.MONGO_USERNAME}:{self.MONGO_PASSWORD}@{self.MONGO_HOST}:{self.MONGO_PORT}/?authSource=admin"
