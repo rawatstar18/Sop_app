@@ -30,8 +30,14 @@
     <div class="mb-6">
       <h2 class="text-xl font-semibold mb-2">🕒 Daily Runs</h2>
       <div class="space-y-2">
-        <label class="flex items-center hover:bg-blue-50 p-2 rounded"><input type="checkbox" class="mr-2"> DAG: <b>gift_daily_data_appends</b> ran at 3:15 am on <b>192.168.0.121:8083</b></label>
-        <label class="flex items-center hover:bg-blue-50 p-2 rounded"><input type="checkbox" class="mr-2"> DAG: <b>gift_daily_data_appends</b> ran at 5:15 am</label>
+        <label class="flex items-center hover:bg-blue-50 p-2 rounded">
+          <input type="checkbox" class="mr-2 sop-task" data-task-id="daily_run_315" data-description="DAG: gift_daily_data_appends ran at 3:15 am on 192.168.0.121:8083"> 
+          DAG: <b>gift_daily_data_appends</b> ran at 3:15 am on <b>192.168.0.121:8083</b>
+        </label>
+        <label class="flex items-center hover:bg-blue-50 p-2 rounded">
+          <input type="checkbox" class="mr-2 sop-task" data-task-id="daily_run_515" data-description="DAG: gift_daily_data_appends ran at 5:15 am"> 
+          DAG: <b>gift_daily_data_appends</b> ran at 5:15 am
+        </label>
       </div>
     </div>
 
@@ -39,8 +45,14 @@
     <div class="mb-6">
       <h2 class="text-xl font-semibold mb-2">🕕 6:00 AM Tasks</h2>
       <div class="space-y-2">
-        <label class="flex items-center hover:bg-green-50 p-2 rounded"><input type="checkbox" class="mr-2"> GIFT Production Module initialized alert received on Google Space</label>
-        <label class="flex items-center hover:bg-green-50 p-2 rounded"><input type="checkbox" class="mr-2"> No unexpected strategy removal logs present on Google Space</label>
+        <label class="flex items-center hover:bg-green-50 p-2 rounded">
+          <input type="checkbox" class="mr-2 sop-task" data-task-id="gift_init_alert" data-description="GIFT Production Module initialized alert received on Google Space"> 
+          GIFT Production Module initialized alert received on Google Space
+        </label>
+        <label class="flex items-center hover:bg-green-50 p-2 rounded">
+          <input type="checkbox" class="mr-2 sop-task" data-task-id="no_strategy_removal" data-description="No unexpected strategy removal logs present on Google Space"> 
+          No unexpected strategy removal logs present on Google Space
+        </label>
       </div>
     </div>
 
@@ -48,17 +60,32 @@
     <div class="mb-6">
       <h2 class="text-xl font-semibold mb-2">🕡 6:30 AM Tasks</h2>
       <div class="space-y-2">
-        <label class="flex items-center hover:bg-yellow-50 p-2 rounded"><input type="checkbox" class="mr-2"> 3 nodes of <b>startDatasnap</b> DAG running (Airflow: 192.168.30.15:18080)</label>
-        <label class="flex items-center hover:bg-yellow-50 p-2 rounded"><input type="checkbox" class="mr-2"> 2 nodes of <b>start_scripts</b> DAG running</label>
-        <label class="flex items-center hover:bg-yellow-50 p-2 rounded"><input type="checkbox" class="mr-2"> ⚠️ Alert: TraderID 398 logged in on 192.168.30.15 received on Teams</label>
-        <label class="flex items-center hover:bg-yellow-50 p-2 rounded"><input type="checkbox" class="mr-2"> 📊 Check Grafana: Time difference from current should be ~3hrs</label>
+        <label class="flex items-center hover:bg-yellow-50 p-2 rounded">
+          <input type="checkbox" class="mr-2 sop-task" data-task-id="startdatasnap_nodes" data-description="3 nodes of startDatasnap DAG running (Airflow: 192.168.30.15:18080)"> 
+          3 nodes of <b>startDatasnap</b> DAG running (Airflow: 192.168.30.15:18080)
+        </label>
+        <label class="flex items-center hover:bg-yellow-50 p-2 rounded">
+          <input type="checkbox" class="mr-2 sop-task" data-task-id="start_scripts_nodes" data-description="2 nodes of start_scripts DAG running"> 
+          2 nodes of <b>start_scripts</b> DAG running
+        </label>
+        <label class="flex items-center hover:bg-yellow-50 p-2 rounded">
+          <input type="checkbox" class="mr-2 sop-task" data-task-id="trader_login_630" data-description="Alert: TraderID 398 logged in on 192.168.30.15 received on Teams"> 
+          ⚠️ Alert: TraderID 398 logged in on 192.168.30.15 received on Teams
+        </label>
+        <label class="flex items-center hover:bg-yellow-50 p-2 rounded">
+          <input type="checkbox" class="mr-2 sop-task" data-task-id="grafana_check" data-description="Check Grafana: Time difference from current should be ~3hrs"> 
+          📊 Check Grafana: Time difference from current should be ~3hrs
+        </label>
       </div>
     </div>
 
     <!-- Section: 4:30 PM -->
     <div class="mb-6">
       <h2 class="text-xl font-semibold mb-2">🕟 4:30 PM Tasks</h2>
-      <label class="flex items-center hover:bg-red-50 p-2 rounded"><input type="checkbox" class="mr-2"> ⚠️ Alert: TraderID 398 logged in on 192.168.30.15 received on Teams</label>
+      <label class="flex items-center hover:bg-red-50 p-2 rounded">
+        <input type="checkbox" class="mr-2 sop-task" data-task-id="trader_login_430" data-description="Alert: TraderID 398 logged in on 192.168.30.15 received on Teams"> 
+        ⚠️ Alert: TraderID 398 logged in on 192.168.30.15 received on Teams
+      </label>
     </div>
 
     <!-- Section: Alerts -->
@@ -88,5 +115,60 @@
   <footer class="text-center text-sm text-gray-500 mt-8">
     🎯 You're doing great! Keep crushing your SOPs like a pro! 🚀
   </footer>
+
+  <script src="js/api.js"></script>
+  <script>
+    // Check authentication
+    if (!api.isAuthenticated()) {
+      window.location.href = 'index.html';
+    }
+
+    // Load completed tasks on page load
+    async function loadCompletedTasks() {
+      try {
+        const activities = await api.getUserSOPActivities('gift_sop');
+        const completedTaskIds = new Set(activities.map(activity => activity.task_id));
+        
+        // Mark checkboxes as checked for completed tasks
+        document.querySelectorAll('.sop-task').forEach(checkbox => {
+          const taskId = checkbox.getAttribute('data-task-id');
+          if (completedTaskIds.has(taskId)) {
+            checkbox.checked = true;
+          }
+        });
+      } catch (error) {
+        console.error('Failed to load completed tasks:', error);
+      }
+    }
+
+    // Handle checkbox changes
+    document.addEventListener('change', async function(event) {
+      if (event.target.classList.contains('sop-task')) {
+        const checkbox = event.target;
+        const taskId = checkbox.getAttribute('data-task-id');
+        const taskDescription = checkbox.getAttribute('data-description');
+        
+        if (checkbox.checked) {
+          try {
+            await api.logSOPActivity('gift_sop', taskId, taskDescription);
+            console.log(`Logged completion of task: ${taskId}`);
+            
+            // Visual feedback
+            checkbox.parentElement.style.backgroundColor = '#dcfce7';
+            setTimeout(() => {
+              checkbox.parentElement.style.backgroundColor = '';
+            }, 2000);
+          } catch (error) {
+            console.error('Failed to log SOP activity:', error);
+            checkbox.checked = false; // Revert checkbox state
+            alert('Failed to save task completion. Please try again.');
+          }
+        }
+      }
+    });
+
+    // Initialize
+    loadCompletedTasks();
+  </script>
 </body>
 </html>

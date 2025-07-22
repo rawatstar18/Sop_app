@@ -50,3 +50,7 @@ def get_db():
 def get_user_collection():
     db = get_db()
     return db["users"]
+
+def get_sop_activity_collection():
+    db = get_db()
+    return db["sop_activities"]

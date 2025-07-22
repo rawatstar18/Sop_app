@@ -1,7 +1,10 @@
 from fastapi import APIRouter, HTTPException, status, Depends, Form
 from datetime import timedelta
-from models import UserCreate, UserResponse, LoginUser, LoginResponse, Token
-from database import get_user_collection
+from models import (
+    UserCreate, UserResponse, LoginUser, LoginResponse, Token,
+    SOPActivityCreate, SOPActivityResponse
+)
+from database import get_user_collection, get_sop_activity_collection
 from auth import (
     verify_password, 
     get_password_hash, 
@@ -9,6 +12,9 @@ from auth import (
     get_current_active_user
 )
 from config import settings
+from fastapi import Request
+from bson import ObjectId
+from datetime import datetime
 import logging
 
 logger = logging.getLogger(__name__)
@@ -164,4 +170,96 @@ async def update_profile(
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Profile update failed"
+
+@user_router.post("/sop/activity", response_model=dict)
+async def log_sop_activity(
+    activity_data: SOPActivityCreate,
+    request: Request,
+    current_user: dict = Depends(get_current_active_user)
+):
+    """Log SOP activity completion"""
+    try:
+        sop_collection = get_sop_activity_collection()
+        
+        # Check if this task was already completed by this user
+        existing_activity = sop_collection.find_one({
+            "user_id": current_user["_id"],
+            "sop_type": activity_data.sop_type,
+            "task_id": activity_data.task_id
+        })
+        
+        if existing_activity:
+            # Update existing activity with new timestamp
+            sop_collection.update_one(
+                {"_id": existing_activity["_id"]},
+                {
+                    "$set": {
+                        "completed_at": datetime.utcnow(),
+                        "ip_address": request.client.host,
+                        "user_agent": request.headers.get("user-agent")
+                    }
+                }
+            )
+            logger.info(f"Updated SOP activity: {activity_data.task_id} for user: {current_user['username']}")
+        else:
+            # Create new activity record
+            activity_record = {
+                "user_id": current_user["_id"],
+                "username": current_user["username"],
+                "sop_type": activity_data.sop_type,
+                "task_id": activity_data.task_id,
+                "task_description": activity_data.task_description,
+                "completed_at": datetime.utcnow(),
+                "ip_address": request.client.host,
+                "user_agent": request.headers.get("user-agent"),
+                "session_id": request.headers.get("x-session-id")
+            }
+            
+            result = sop_collection.insert_one(activity_record)
+            logger.info(f"Logged SOP activity: {activity_data.task_id} for user: {current_user['username']}")
+        
+        return {"message": "SOP activity logged successfully"}
+    
+    except Exception as e:
+        logger.error(f"SOP activity logging error: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to log SOP activity"
+        )
+
+@user_router.get("/sop/activities", response_model=List[SOPActivityResponse])
+async def get_user_sop_activities(
+    sop_type: str = None,
+    current_user: dict = Depends(get_current_active_user)
+):
+    """Get current user's SOP activities"""
+    try:
+        sop_collection = get_sop_activity_collection()
+        
+        query = {"user_id": current_user["_id"]}
+        if sop_type:
+            query["sop_type"] = sop_type
+        
+        activities = list(sop_collection.find(query).sort("completed_at", -1))
+        
+        return [
+            SOPActivityResponse(
+                id=str(activity["_id"]),
+                user_id=str(activity["user_id"]),
+                username=activity["username"],
+                sop_type=activity["sop_type"],
+                task_id=activity["task_id"],
+                task_description=activity["task_description"],
+                completed_at=activity["completed_at"],
+                ip_address=activity.get("ip_address"),
+                user_agent=activity.get("user_agent")
+            )
+            for activity in activities
+        ]
+    
+    except Exception as e:
+        logger.error(f"Get SOP activities error: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to retrieve SOP activities"
         )

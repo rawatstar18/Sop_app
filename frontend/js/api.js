@@ -139,6 +139,62 @@ class ApiClient {
         const user = localStorage.getItem('user');
         return user ? JSON.parse(user) : null;
     }
+
+    // SOP Activity methods
+    async logSOPActivity(sopType, taskId, taskDescription) {
+        return await this.request('/sop/activity', {
+            method: 'POST',
+            body: JSON.stringify({
+                sop_type: sopType,
+                task_id: taskId,
+                task_description: taskDescription
+            }),
+        });
+    }
+
+    async getUserSOPActivities(sopType = null) {
+        const endpoint = sopType ? `/sop/activities?sop_type=${sopType}` : '/sop/activities';
+        return await this.request(endpoint);
+    }
+
+    // Admin SOP methods
+    async getAllSOPActivities(sopType = null, userId = null, days = 30) {
+        let endpoint = `/admin/sop/activities?days=${days}`;
+        if (sopType) endpoint += `&sop_type=${sopType}`;
+        if (userId) endpoint += `&user_id=${userId}`;
+        return await this.request(endpoint);
+    }
+
+    async downloadSOPReport(sopType = null, userId = null, days = 30, format = 'csv') {
+        let endpoint = `/admin/sop/report?format=${format}&days=${days}`;
+        if (sopType) endpoint += `&sop_type=${sopType}`;
+        if (userId) endpoint += `&user_id=${userId}`;
+        
+        const url = `${this.baseURL}${endpoint}`;
+        const response = await fetch(url, {
+            headers: this.getHeaders(),
+        });
+        
+        if (!response.ok) {
+            throw new Error('Failed to download report');
+        }
+        
+        const blob = await response.blob();
+        const downloadUrl = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = downloadUrl;
+        a.download = `sop_report_${new Date().toISOString().slice(0, 10)}.csv`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(downloadUrl);
+    }
+
+    async getSOPSummary(sopType = null, days = 30) {
+        let endpoint = `/admin/sop/summary?days=${days}`;
+        if (sopType) endpoint += `&sop_type=${sopType}`;
+        return await this.request(endpoint);
+    }
 }
 
 // Global API client instance

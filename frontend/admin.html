@@ -3,129 +3,359 @@
 <head>
   <meta charset="UTF-8">
   <title>Admin Dashboard</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
   <style>
     body {
-      background-color: #f8f9fa;
-    }
-    .container {
-      margin-top: 50px;
-    }
-    .card {
-      border-radius: 15px;
-    }
-    table {
-      margin-top: 20px;
+      background-color: #f9fafb;
     }
   </style>
 </head>
-<body>
-<div class="container">
-  <h2 class="text-center mb-4">Admin Dashboard</h2>
-  
-  <div class="card p-4">
-    <h5>User Management</h5>
-    <p id="user-count" class="text-muted"></p>
-
-    <table class="table table-bordered">
-      <thead>
-        <tr>
-          <th>Email</th>
-          <th>Username</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody id="user-table"></tbody>
-    </table>
-
-    <h6 class="mt-4">Create User</h6>
-    <div class="row g-2">
-      <div class="col-md-4">
-        <input type="text" id="new-username" class="form-control" placeholder="Username">
-      </div>
-      <div class="col-md-4">
-        <input type="email" id="new-email" class="form-control" placeholder="Email">
-      </div>
-      <div class="col-md-4">
-        <input type="password" id="new-password" class="form-control" placeholder="Password">
+<body class="bg-gray-50 text-gray-800 min-h-screen font-sans">
+  <!-- Header -->
+  <header class="bg-white shadow-sm border-b border-gray-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center py-4">
+        <div class="flex items-center">
+          <h1 class="text-2xl font-bold text-blue-600">Admin Dashboard</h1>
+        </div>
+        <div class="flex items-center space-x-4">
+          <a href="dashboard.html" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition duration-200 text-sm font-medium">
+            Back to Dashboard
+          </a>
+          <button onclick="logout()" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition duration-200 text-sm font-medium">
+            Sign Out
+          </button>
+        </div>
       </div>
     </div>
-    <button class="btn btn-primary mt-2" onclick="createUser()">Create</button>
-  </div>
-</div>
+  </header>
 
-<script>
-  async function fetchUsers() {
-    const res = await fetch('http://localhost:8000/admin/users');
-    const users = await res.json();
-    document.getElementById('user-count').textContent = `Total Users: ${users.length}`;
+  <!-- Main Content -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Tab Navigation -->
+    <div class="mb-8">
+      <nav class="flex space-x-8">
+        <button onclick="showTab('users')" id="users-tab" class="tab-button active">User Management</button>
+        <button onclick="showTab('sop-reports')" id="sop-reports-tab" class="tab-button">SOP Reports</button>
+        <button onclick="showTab('sop-activities')" id="sop-activities-tab" class="tab-button">SOP Activities</button>
+      </nav>
+    </div>
 
-    const table = document.getElementById('user-table');
-    table.innerHTML = '';
-    users.forEach(user => {
-      const row = document.createElement('tr');
-      row.innerHTML = `
-        <td>${user.email}</td>
-        <td>${user.username || ''}</td>
-        <td>
-          <button class="btn btn-sm btn-warning me-1" onclick="showUpdate('${user._id.$oid}', '${user.email}', '${user.username}')">Edit</button>
-          <button class="btn btn-sm btn-danger" onclick="deleteUser('${user._id.$oid}')">Delete</button>
-        </td>
-      `;
-      table.appendChild(row);
-    });
-  }
+    <!-- Users Tab -->
+    <div id="users-content" class="tab-content">
+      <div class="bg-white rounded-lg shadow-sm p-6">
+        <h2 class="text-xl font-semibold text-gray-900 mb-4">User Management</h2>
+        <p id="user-count" class="text-gray-600 mb-6"></p>
 
-  async function createUser() {
-    const email = document.getElementById('new-email').value;
-    const password = document.getElementById('new-password').value;
-    const username = document.getElementById('new-username').value;
+        <div class="overflow-x-auto">
+          <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+              <tr>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Username</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="user-table" class="bg-white divide-y divide-gray-200">
+            </tbody>
+          </table>
+        </div>
 
-    const res = await fetch('http://localhost:8000/admin/create', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password, username })
-    });
+        <div class="mt-8 border-t pt-6">
+          <h3 class="text-lg font-medium text-gray-900 mb-4">Create New User</h3>
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <input type="text" id="new-username" class="border border-gray-300 rounded-lg px-3 py-2" placeholder="Username">
+            <input type="email" id="new-email" class="border border-gray-300 rounded-lg px-3 py-2" placeholder="Email">
+            <input type="password" id="new-password" class="border border-gray-300 rounded-lg px-3 py-2" placeholder="Password">
+            <select id="new-role" class="border border-gray-300 rounded-lg px-3 py-2">
+              <option value="user">User</option>
+              <option value="admin">Admin</option>
+            </select>
+          </div>
+          <button onclick="createUser()" class="mt-4 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition duration-200">
+            Create User
+          </button>
+        </div>
+      </div>
+    </div>
 
-    const data = await res.json();
-    alert(data.message || data.detail);
-    fetchUsers();
-  }
+    <!-- SOP Reports Tab -->
+    <div id="sop-reports-content" class="tab-content hidden">
+      <div class="bg-white rounded-lg shadow-sm p-6">
+        <div class="flex justify-between items-center mb-6">
+          <h2 class="text-xl font-semibold text-gray-900">SOP Reports</h2>
+          <div class="flex space-x-4">
+            <select id="report-days" class="border border-gray-300 rounded-lg px-3 py-2">
+              <option value="7">Last 7 days</option>
+              <option value="30" selected>Last 30 days</option>
+              <option value="90">Last 90 days</option>
+            </select>
+            <button onclick="downloadReport()" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition duration-200">
+              Download CSV Report
+            </button>
+          </div>
+        </div>
 
-  function showUpdate(id, email, username) {
-    const newUsername = prompt('Update username:', username);
-    const newPassword = prompt('New password (leave blank to keep same):');
+        <div id="sop-summary" class="space-y-4">
+          <!-- SOP summary will be loaded here -->
+        </div>
+      </div>
+    </div>
 
-    if (newUsername !== null) {
-      updateUser(id, email, newUsername, newPassword);
+    <!-- SOP Activities Tab -->
+    <div id="sop-activities-content" class="tab-content hidden">
+      <div class="bg-white rounded-lg shadow-sm p-6">
+        <div class="flex justify-between items-center mb-6">
+          <h2 class="text-xl font-semibold text-gray-900">Recent SOP Activities</h2>
+          <div class="flex space-x-4">
+            <select id="activity-days" class="border border-gray-300 rounded-lg px-3 py-2">
+              <option value="1">Today</option>
+              <option value="7" selected>Last 7 days</option>
+              <option value="30">Last 30 days</option>
+            </select>
+            <button onclick="loadSOPActivities()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition duration-200">
+              Refresh
+            </button>
+          </div>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+              <tr>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Task</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Completed At</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">IP Address</th>
+              </tr>
+            </thead>
+            <tbody id="activities-table" class="bg-white divide-y divide-gray-200">
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="js/api.js"></script>
+  <script>
+    // Check authentication and admin role
+    if (!api.isAuthenticated()) {
+      window.location.href = 'index.html';
     }
-  }
 
-  async function updateUser(id, email, username, password) {
-    const res = await fetch(`http://localhost:8000/admin/update/${id}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, username, password })
-    });
+    const currentUser = api.getCurrentUser();
+    if (currentUser.role !== 'admin') {
+      alert('Access denied. Admin privileges required.');
+      window.location.href = 'dashboard.html';
+    }
 
-    const data = await res.json();
-    alert(data.message || data.detail);
-    fetchUsers();
-  }
-
-  async function deleteUser(id) {
-    if (confirm('Are you sure you want to delete this user?')) {
-      const res = await fetch(`http://localhost:8000/admin/delete/${id}`, {
-        method: 'DELETE'
+    // Tab functionality
+    function showTab(tabName) {
+      // Hide all tab contents
+      document.querySelectorAll('.tab-content').forEach(content => {
+        content.classList.add('hidden');
       });
-
-      const data = await res.json();
-      alert(data.message || data.detail);
-      fetchUsers();
+      
+      // Remove active class from all tabs
+      document.querySelectorAll('.tab-button').forEach(button => {
+        button.classList.remove('active');
+      });
+      
+      // Show selected tab content
+      document.getElementById(tabName + '-content').classList.remove('hidden');
+      document.getElementById(tabName + '-tab').classList.add('active');
+      
+      // Load data for the selected tab
+      if (tabName === 'users') {
+        fetchUsers();
+      } else if (tabName === 'sop-reports') {
+        loadSOPSummary();
+      } else if (tabName === 'sop-activities') {
+        loadSOPActivities();
+      }
     }
-  }
 
-  fetchUsers();
-</script>
+    // User management functions
+    async function fetchUsers() {
+      try {
+        const users = await api.getUsers();
+        document.getElementById('user-count').textContent = `Total Users: ${users.length}`;
+
+        const table = document.getElementById('user-table');
+        table.innerHTML = '';
+        
+        users.forEach(user => {
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${user.username}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${user.email}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 capitalize">${user.role}</td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${user.is_active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}">
+                ${user.is_active ? 'Active' : 'Inactive'}
+              </span>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+              <button onclick="editUser('${user.id}')" class="text-indigo-600 hover:text-indigo-900 mr-4">Edit</button>
+              <button onclick="deleteUser('${user.id}')" class="text-red-600 hover:text-red-900">Delete</button>
+            </td>
+          `;
+          table.appendChild(row);
+        });
+      } catch (error) {
+        console.error('Failed to fetch users:', error);
+        alert('Failed to load users');
+      }
+    }
+
+    async function createUser() {
+      const username = document.getElementById('new-username').value;
+      const email = document.getElementById('new-email').value;
+      const password = document.getElementById('new-password').value;
+      const role = document.getElementById('new-role').value;
+
+      if (!username || !email || !password) {
+        alert('Please fill in all fields');
+        return;
+      }
+
+      try {
+        await api.createUser({ username, email, password, role });
+        alert('User created successfully');
+        
+        // Clear form
+        document.getElementById('new-username').value = '';
+        document.getElementById('new-email').value = '';
+        document.getElementById('new-password').value = '';
+        document.getElementById('new-role').value = 'user';
+        
+        fetchUsers();
+      } catch (error) {
+        alert('Failed to create user: ' + error.message);
+      }
+    }
+
+    async function editUser(userId) {
+      // Simple edit functionality - in a real app, you'd have a proper form
+      const newPassword = prompt('Enter new password (leave blank to keep current):');
+      if (newPassword !== null && newPassword.trim() !== '') {
+        try {
+          await api.updateUser(userId, { password: newPassword });
+          alert('User updated successfully');
+          fetchUsers();
+        } catch (error) {
+          alert('Failed to update user: ' + error.message);
+        }
+      }
+    }
+
+    async function deleteUser(userId) {
+      if (confirm('Are you sure you want to delete this user?')) {
+        try {
+          await api.deleteUser(userId);
+          alert('User deleted successfully');
+          fetchUsers();
+        } catch (error) {
+          alert('Failed to delete user: ' + error.message);
+        }
+      }
+    }
+
+    // SOP reporting functions
+    async function loadSOPSummary() {
+      try {
+        const days = document.getElementById('report-days').value;
+        const summary = await api.getSOPSummary('gift_sop', parseInt(days));
+        
+        const container = document.getElementById('sop-summary');
+        container.innerHTML = '';
+        
+        summary.forEach(report => {
+          const div = document.createElement('div');
+          div.className = 'border border-gray-200 rounded-lg p-4';
+          div.innerHTML = `
+            <div class="flex justify-between items-center mb-2">
+              <h3 class="text-lg font-medium text-gray-900">${report.username}</h3>
+              <span class="text-sm text-gray-500">${report.total_tasks} tasks completed</span>
+            </div>
+            <div class="flex items-center space-x-4">
+              <div class="flex-1 bg-gray-200 rounded-full h-2">
+                <div class="bg-green-600 h-2 rounded-full" style="width: ${report.completion_percentage}%"></div>
+              </div>
+              <span class="text-sm font-medium text-gray-900">${report.completion_percentage.toFixed(1)}%</span>
+            </div>
+            ${report.last_activity ? `<p class="text-sm text-gray-500 mt-2">Last activity: ${new Date(report.last_activity).toLocaleString()}</p>` : ''}
+          `;
+          container.appendChild(div);
+        });
+      } catch (error) {
+        console.error('Failed to load SOP summary:', error);
+      }
+    }
+
+    async function loadSOPActivities() {
+      try {
+        const days = document.getElementById('activity-days').value;
+        const activities = await api.getAllSOPActivities('gift_sop', null, parseInt(days));
+        
+        const table = document.getElementById('activities-table');
+        table.innerHTML = '';
+        
+        activities.forEach(activity => {
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${activity.username}</td>
+            <td class="px-6 py-4 text-sm text-gray-500">${activity.task_description}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${new Date(activity.completed_at).toLocaleString()}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${activity.ip_address || 'N/A'}</td>
+          `;
+          table.appendChild(row);
+        });
+      } catch (error) {
+        console.error('Failed to load SOP activities:', error);
+      }
+    }
+
+    async function downloadReport() {
+      try {
+        const days = document.getElementById('report-days').value;
+        await api.downloadSOPReport('gift_sop', null, parseInt(days));
+      } catch (error) {
+        alert('Failed to download report: ' + error.message);
+      }
+    }
+
+    function logout() {
+      if (confirm('Are you sure you want to sign out?')) {
+        api.logout();
+      }
+    }
+
+    // CSS for tabs
+    const style = document.createElement('style');
+    style.textContent = `
+      .tab-button {
+        padding: 0.5rem 1rem;
+        border-bottom: 2px solid transparent;
+        font-weight: 500;
+        color: #6b7280;
+        transition: all 0.2s;
+      }
+      .tab-button:hover {
+        color: #374151;
+      }
+      .tab-button.active {
+        color: #2563eb;
+        border-bottom-color: #2563eb;
+      }
+    `;
+    document.head.appendChild(style);
+
+    // Initialize with users tab
+    showTab('users');
+  </script>
 </body>
 </html>

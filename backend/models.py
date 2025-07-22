@@ -94,3 +94,47 @@ class Token(BaseModel):
 
 class TokenData(BaseModel):
     username: Optional[str] = None
+
+class SOPActivity(BaseModel):
+    id: Optional[PyObjectId] = Field(default_factory=PyObjectId, alias="_id")
+    user_id: PyObjectId
+    username: str
+    sop_type: str = Field(..., description="Type of SOP (e.g., 'gift_sop')")
+    task_id: str = Field(..., description="Unique identifier for the task")
+    task_description: str = Field(..., description="Description of the completed task")
+    completed_at: datetime = Field(default_factory=datetime.utcnow)
+    ip_address: Optional[str] = None
+    user_agent: Optional[str] = None
+    session_id: Optional[str] = None
+    
+    model_config = {
+        "populate_by_name": True,
+        "arbitrary_types_allowed": True,
+        "json_encoders": {ObjectId: str, datetime: str}
+    }
+
+class SOPActivityCreate(BaseModel):
+    sop_type: str
+    task_id: str
+    task_description: str
+
+class SOPActivityResponse(BaseModel):
+    id: str
+    user_id: str
+    username: str
+    sop_type: str
+    task_id: str
+    task_description: str
+    completed_at: datetime
+    ip_address: Optional[str]
+    user_agent: Optional[str]
+
+class SOPReport(BaseModel):
+    user_id: str
+    username: str
+    sop_type: str
+    total_tasks: int
+    completed_tasks: int
+    completion_percentage: float
+    last_activity: Optional[datetime]
+    activities: List[SOPActivityResponse]
