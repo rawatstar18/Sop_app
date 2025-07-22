@@ -1,6 +1,10 @@
 class ApiClient {
     constructor() {
-        this.baseURL = 'http://localhost:8000/api/v1';
+        // Dynamically determine the API base URL
+        const protocol = window.location.protocol;
+        const hostname = window.location.hostname;
+        const port = hostname === 'localhost' || hostname === '127.0.0.1' ? '8000' : '8000';
+        this.baseURL = `${protocol}//${hostname}:${port}/api/v1`;
         this.token = localStorage.getItem('access_token');
     }
 
@@ -32,6 +36,8 @@ class ApiClient {
             ...options,
         };
 
+        console.log('Making API request to:', url);
+        
         try {
             const response = await fetch(url, config);
             
@@ -44,6 +50,7 @@ class ApiClient {
             const data = await response.json();
             
             if (!response.ok) {
+                console.error('API request failed:', response.status, data);
                 throw new Error(data.detail || 'Request failed');
             }
             

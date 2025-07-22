@@ -17,7 +17,7 @@ class Settings:
     # CORS
     @property
     def ALLOWED_ORIGINS(self) -> List[str]:
-        origins = os.getenv("ALLOWED_ORIGINS", "http://localhost:8080,http://127.0.0.1:8080")
+        origins = os.getenv("ALLOWED_ORIGINS", "http://localhost:8080,http://127.0.0.1:8080,http://192.168.130.21:8080")
         return [origin.strip() for origin in origins.split(",")]
 
     @property

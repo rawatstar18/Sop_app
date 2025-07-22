@@ -49,6 +49,7 @@ def verify_token(credentials: HTTPAuthorizationCredentials = Depends(security)):
             raise credentials_exception
         token_data = TokenData(username=username)
     except JWTError:
+        logger.error("JWT token verification failed")
         raise credentials_exception
     
     user_collection = get_user_collection()

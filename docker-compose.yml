@@ -40,6 +40,7 @@ services:
       MONGO_PASSWORD: admin
       MONGO_DB_NAME: appdb
       SECRET_KEY: your-super-secret-key-change-in-production
+      ALLOWED_ORIGINS: "http://localhost:8080,http://127.0.0.1:8080,http://192.168.130.21:8080"
     networks:
       - app-network
     healthcheck:

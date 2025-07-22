@@ -99,9 +99,11 @@
       showLoading();
 
       try {
+        console.log('Attempting login with API URL:', api.baseURL);
         await api.login(username, password);
         window.location.href = 'dashboard.html';
       } catch (error) {
+        console.error('Login error:', error);
         showError(error.message || 'Login failed. Please try again.');
         hideLoading();
       }

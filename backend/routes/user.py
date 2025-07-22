@@ -60,10 +60,12 @@ async def register_user(
 async def login(user_data: LoginUser):
     """Authenticate user and return JWT token"""
     try:
+        logger.info(f"Login attempt for user: {user_data.username}")
         user_collection = get_user_collection()
         user = user_collection.find_one({"username": user_data.username})
         
         if not user or not verify_password(user_data.password, user["password"]):
+            logger.warning(f"Failed login attempt for user: {user_data.username}")
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Invalid username or password"
