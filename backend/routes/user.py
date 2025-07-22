@@ -1,14 +1,14 @@
 from fastapi import APIRouter, HTTPException, status, Depends, Form
 from datetime import timedelta
-from backend.models import UserCreate, UserResponse, LoginUser, LoginResponse, Token
-from backend.database import get_user_collection
-from backend.auth import (
+from models import UserCreate, UserResponse, LoginUser, LoginResponse, Token
+from database import get_user_collection
+from auth import (
     verify_password, 
     get_password_hash, 
     create_access_token,
     get_current_active_user
 )
-from backend.config import settings
+from config import settings
 import logging
 
 logger = logging.getLogger(__name__)

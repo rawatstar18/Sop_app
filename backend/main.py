@@ -3,11 +3,11 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from contextlib import asynccontextmanager
 import logging
-from backend.config import settings
-from backend.database import db_instance
-from backend.routes.user import user_router
-from backend.routes.admin import admin_router
-from backend.services.admin import create_default_admin
+from config import settings
+from database import db_instance
+from routes.user import user_router
+from routes.admin import admin_router
+from services.admin import create_default_admin
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)

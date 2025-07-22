@@ -33,8 +33,6 @@ services:
         condition: service_healthy
     ports:
       - "8000:8000"
-    volumes:
-      - ./backend:/app
     environment:
       MONGO_HOST: mongo
       MONGO_PORT: 27017

@@ -1,9 +1,9 @@
 from fastapi import APIRouter, HTTPException, status, Depends
 from typing import List
 from bson import ObjectId
-from backend.models import UserCreate, UserUpdate, UserResponse
-from backend.database import get_user_collection
-from backend.auth import require_admin, get_password_hash
+from models import UserCreate, UserUpdate, UserResponse
+from database import get_user_collection
+from auth import require_admin, get_password_hash
 import logging
 
 logger = logging.getLogger(__name__)

@@ -1,5 +1,5 @@
-from backend.database import get_user_collection
-from backend.auth import get_password_hash
+from database import get_user_collection
+from auth import get_password_hash
 import logging
 
 logger = logging.getLogger(__name__)
