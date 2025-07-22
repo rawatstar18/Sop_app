@@ -7,7 +7,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     body {
-      background: linear-gradient(to right, #3b82f6, #60a5fa);
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     }
   </style>
 </head>
@@ -16,42 +16,74 @@
   <div class="bg-white shadow-2xl rounded-2xl p-10 w-full max-w-md animate-fade-in">
     <div class="text-center mb-8">
       <h1 class="text-3xl font-extrabold text-blue-600 mb-2">Welcome Back</h1>
-      <p class="text-sm text-gray-500">Login with your username</p>
+      <p class="text-sm text-gray-500">Sign in to your account</p>
     </div>
 
     <form id="loginForm" class="space-y-6">
       <div>
         <label for="username" class="block text-sm font-medium mb-1">Username</label>
-        <input type="text" id="username" placeholder="e.g. sysadmin" required
-          class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
+        <input type="text" id="username" placeholder="Enter your username" required
+          class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200" />
       </div>
 
       <div>
         <label for="password" class="block text-sm font-medium mb-1">Password</label>
-        <input type="password" id="password" placeholder="••••••••" required
-          class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
+        <input type="password" id="password" placeholder="Enter your password" required
+          class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200" />
       </div>
 
       <div>
-        <button type="submit"
-          class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition duration-300">
-          Login
+        <button type="submit" id="loginBtn"
+          class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-lg transition duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+          Sign In
         </button>
       </div>
     </form>
 
-    <p id="errorMsg" class="text-red-500 mt-4 text-center hidden">Invalid username or password.</p>
+    <div id="errorMsg" class="mt-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg hidden">
+      <p class="text-sm"></p>
+    </div>
+
+    <div id="loadingMsg" class="mt-4 p-3 bg-blue-100 border border-blue-400 text-blue-700 rounded-lg hidden">
+      <p class="text-sm">Signing in...</p>
+    </div>
 
     <div class="mt-6 text-center text-sm text-gray-500">
-      Don’t have an account?
-      <a href="register.html" class="text-blue-600 hover:underline">Register here</a>
+      Don't have an account?
+      <a href="register.html" class="text-blue-600 hover:underline font-medium">Create one here</a>
     </div>
   </div>
 
-  <!-- Login script -->
+  <script src="js/api.js"></script>
   <script>
     const form = document.getElementById('loginForm');
     const errorMsg = document.getElementById('errorMsg');
+    const loadingMsg = document.getElementById('loadingMsg');
+    const loginBtn = document.getElementById('loginBtn');
+
+    function showError(message) {
+      errorMsg.querySelector('p').textContent = message;
+      errorMsg.classList.remove('hidden');
+      loadingMsg.classList.add('hidden');
+    }
+
+    function showLoading() {
+      loadingMsg.classList.remove('hidden');
+      errorMsg.classList.add('hidden');
+      loginBtn.disabled = true;
+      loginBtn.textContent = 'Signing in...';
+    }
+
+    function hideLoading() {
+      loadingMsg.classList.add('hidden');
+      loginBtn.disabled = false;
+      loginBtn.textContent = 'Sign In';
+    }
+
+    // Check if already logged in
+    if (api.isAuthenticated()) {
+      window.location.href = 'dashboard.html';
+    }
 
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -59,28 +91,23 @@
       const username = document.getElementById('username').value.trim();
       const password = document.getElementById('password').value;
 
-      try {
-        const res = await fetch('http://localhost:8000/login', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ username, password })
-        });
+      if (!username || !password) {
+        showError('Please fill in all fields');
+        return;
+      }
 
-        if (res.ok) {
-          window.location.href = 'dashboard.html'; // ✅ Updated redirect
-        } else {
-          errorMsg.classList.remove('hidden');
-        }
-      } catch (err) {
-        console.error('Login error:', err);
-        errorMsg.textContent = "Server error. Please try again later.";
-        errorMsg.classList.remove('hidden');
+      showLoading();
+
+      try {
+        await api.login(username, password);
+        window.location.href = 'dashboard.html';
+      } catch (error) {
+        showError(error.message || 'Login failed. Please try again.');
+        hideLoading();
       }
     });
-  </script>
 
-  <!-- Tailwind custom animation -->
-  <script>
+    // Tailwind animation config
     tailwind.config = {
       theme: {
         extend: {

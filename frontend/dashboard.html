@@ -2,65 +2,202 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>SOP Dashboard</title>
+  <title>Dashboard | User Manager</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-100 text-gray-800 min-h-screen font-sans">
+<body class="bg-gray-50 text-gray-800 min-h-screen font-sans">
   <!-- Header -->
-  <header class="bg-blue-700 text-white px-6 py-4 flex justify-between items-center shadow">
-    <div class="text-2xl font-bold">SOP Dashboard</div>
-    <div class="flex items-center gap-4">
-      <div class="bg-blue-800 px-3 py-1 rounded text-sm font-mono" id="clock">--:--:--</div>
+  <header class="bg-white shadow-sm border-b border-gray-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center py-4">
+        <div class="flex items-center">
+          <h1 class="text-2xl font-bold text-blue-600">User Manager</h1>
+        </div>
+        <div class="flex items-center space-x-4">
+          <div class="bg-blue-50 px-3 py-1 rounded-full text-sm font-mono text-blue-700" id="clock">--:--:--</div>
+          <div class="text-sm text-gray-600">
+            Welcome, <span id="username-display" class="font-semibold text-gray-900">User</span>!
+          </div>
+          <button 
+            onclick="logout()" 
+            class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition duration-200 text-sm font-medium"
+            title="Logout and return to login screen"
+          >
+            Sign Out
+          </button>
+        </div>
+      </div>
     </div>
   </header>
 
   <!-- Main Content -->
-  <main class="p-8">
-    <div class="max-w-4xl mx-auto bg-white rounded shadow p-6">
-      <div class="flex justify-between items-center mb-6">
-        <h2 class="text-xl font-semibold text-blue-700">
-          Welcome, <span id="username-display" class="text-gray-900">Admin</span>!
-        </h2>
-        <button 
-          onclick="logout()" 
-          class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded transition"
-          title="Logout and return to login screen"
-        >
-          🔓 Logout
-        </button>
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="bg-white rounded-lg shadow-sm p-6 mb-8">
+      <h2 class="text-xl font-semibold text-gray-900 mb-4">Dashboard Overview</h2>
+      <p class="text-gray-600 mb-6">Welcome to your user management dashboard. Use the tools below to manage your account and access system features.</p>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- Profile Card -->
+        <div class="bg-gradient-to-br from-blue-50 to-blue-100 p-6 rounded-lg border border-blue-200">
+          <div class="flex items-center mb-4">
+            <div class="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center">
+              <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+              </svg>
+            </div>
+            <h3 class="ml-3 text-lg font-semibold text-gray-900">My Profile</h3>
+          </div>
+          <p class="text-gray-600 text-sm mb-4">View and update your account information</p>
+          <button onclick="showProfile()" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg transition duration-200 text-sm font-medium">
+            View Profile
+          </button>
+        </div>
+
+        <!-- SOP Tools Card -->
+        <div class="bg-gradient-to-br from-green-50 to-green-100 p-6 rounded-lg border border-green-200">
+          <div class="flex items-center mb-4">
+            <div class="w-10 h-10 bg-green-500 rounded-lg flex items-center justify-center">
+              <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+              </svg>
+            </div>
+            <h3 class="ml-3 text-lg font-semibold text-gray-900">SOP Tools</h3>
+          </div>
+          <p class="text-gray-600 text-sm mb-4">Access standard operating procedures and checklists</p>
+          <a href="gift_sop.html" class="block w-full bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded-lg transition duration-200 text-sm font-medium text-center">
+            View GIFT SOP
+          </a>
+        </div>
+
+        <!-- Admin Panel Card (only for admins) -->
+        <div id="adminCard" class="bg-gradient-to-br from-purple-50 to-purple-100 p-6 rounded-lg border border-purple-200 hidden">
+          <div class="flex items-center mb-4">
+            <div class="w-10 h-10 bg-purple-500 rounded-lg flex items-center justify-center">
+              <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
+              </svg>
+            </div>
+            <h3 class="ml-3 text-lg font-semibold text-gray-900">Admin Panel</h3>
+          </div>
+          <p class="text-gray-600 text-sm mb-4">Manage users and system settings</p>
+          <a href="admin.html" class="block w-full bg-purple-600 hover:bg-purple-700 text-white py-2 px-4 rounded-lg transition duration-200 text-sm font-medium text-center">
+            Open Admin Panel
+          </a>
+        </div>
       </div>
+    </div>
 
-      <p class="text-lg mb-6 text-gray-700">Manage users and monitor SOP tasks using the tools below.</p>
-
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <a href="gift_sop.html" class="block bg-green-600 text-white text-center py-3 rounded hover:bg-green-700 transition font-medium">
-          📌 View GIFT SOP
-        </a>
+    <!-- Profile Modal -->
+    <div id="profileModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
+      <div class="flex items-center justify-center min-h-screen p-4">
+        <div class="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
+          <div class="flex justify-between items-center mb-4">
+            <h3 class="text-lg font-semibold text-gray-900">My Profile</h3>
+            <button onclick="hideProfile()" class="text-gray-400 hover:text-gray-600">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+              </svg>
+            </button>
+          </div>
+          
+          <div id="profileContent" class="space-y-4">
+            <!-- Profile content will be loaded here -->
+          </div>
+        </div>
       </div>
     </div>
   </main>
 
-  <!-- Scripts -->
+  <script src="js/api.js"></script>
   <script>
-    // Live IST Clock
+    // Check authentication
+    if (!api.isAuthenticated()) {
+      window.location.href = 'index.html';
+    }
+
+    // Live clock
     function updateClock() {
       const now = new Date();
-      const options = { timeZone: 'Asia/Kolkata', hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' };
-      const timeStr = now.toLocaleTimeString('en-IN', options);
+      const timeStr = now.toLocaleTimeString('en-US', { 
+        hour12: false, 
+        hour: '2-digit', 
+        minute: '2-digit', 
+        second: '2-digit' 
+      });
       document.getElementById('clock').textContent = timeStr;
     }
     setInterval(updateClock, 1000);
     updateClock();
 
-    // Show logged-in username from localStorage
-    const username = localStorage.getItem("username") || "Admin";
-    document.getElementById("username-display").textContent = username.charAt(0).toUpperCase() + username.slice(1);
-
-    // Logout handler
-    function logout() {
-      localStorage.clear();
-      window.location.href = "index.html"; // ✅ Updated from login.html to index.html
+    // Load user info
+    async function loadUserInfo() {
+      try {
+        const user = api.getCurrentUser();
+        if (user) {
+          document.getElementById("username-display").textContent = user.name || user.username;
+          
+          // Show admin card if user is admin
+          if (user.role === 'admin') {
+            document.getElementById('adminCard').classList.remove('hidden');
+          }
+        }
+      } catch (error) {
+        console.error('Failed to load user info:', error);
+      }
     }
+
+    // Profile modal functions
+    async function showProfile() {
+      try {
+        const profile = await api.getProfile();
+        const content = document.getElementById('profileContent');
+        
+        content.innerHTML = `
+          <div class="space-y-3">
+            <div>
+              <label class="block text-sm font-medium text-gray-700">Username</label>
+              <p class="mt-1 text-sm text-gray-900">${profile.username}</p>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700">Full Name</label>
+              <p class="mt-1 text-sm text-gray-900">${profile.name || 'Not set'}</p>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700">Email</label>
+              <p class="mt-1 text-sm text-gray-900">${profile.email}</p>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700">Role</label>
+              <p class="mt-1 text-sm text-gray-900 capitalize">${profile.role}</p>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700">Status</label>
+              <span class="mt-1 inline-flex px-2 py-1 text-xs font-semibold rounded-full ${profile.is_active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}">
+                ${profile.is_active ? 'Active' : 'Inactive'}
+              </span>
+            </div>
+          </div>
+        `;
+        
+        document.getElementById('profileModal').classList.remove('hidden');
+      } catch (error) {
+        alert('Failed to load profile: ' + error.message);
+      }
+    }
+
+    function hideProfile() {
+      document.getElementById('profileModal').classList.add('hidden');
+    }
+
+    // Logout function
+    function logout() {
+      if (confirm('Are you sure you want to sign out?')) {
+        api.logout();
+      }
+    }
+
+    // Initialize
+    loadUserInfo();
   </script>
 </body>
 </html>
