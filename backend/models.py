@@ -1,6 +1,8 @@
-from pydantic import BaseModel, EmailStr, Field, field_validator
-from typing import Optional, Annotated
+from pydantic import BaseModel, EmailStr, Field, field_validator 
+from typing import Optional, Annotated, List
 from bson import ObjectId
+from datetime import datetime
+from zoneinfo import ZoneInfo
 import re
 
 class PyObjectId(ObjectId):
@@ -102,7 +104,7 @@ class SOPActivity(BaseModel):
     sop_type: str = Field(..., description="Type of SOP (e.g., 'gift_sop')")
     task_id: str = Field(..., description="Unique identifier for the task")
     task_description: str = Field(..., description="Description of the completed task")
-    completed_at: datetime = Field(default_factory=datetime.utcnow)
+    completed_at: datetime = Field(default_factory=lambda: datetime.now(ZoneInfo("Asia/Kolkata")))
     ip_address: Optional[str] = None
     user_agent: Optional[str] = None
     session_id: Optional[str] = None

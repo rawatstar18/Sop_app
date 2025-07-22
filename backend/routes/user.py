@@ -1,5 +1,5 @@
-from fastapi import APIRouter, HTTPException, status, Depends, Form
-from datetime import timedelta
+from fastapi import APIRouter, HTTPException, status, Depends, Form , Request
+from datetime import timedelta , datetime
 from models import (
     UserCreate, UserResponse, LoginUser, LoginResponse, Token,
     SOPActivityCreate, SOPActivityResponse
@@ -12,9 +12,8 @@ from auth import (
     get_current_active_user
 )
 from config import settings
-from fastapi import Request
 from bson import ObjectId
-from datetime import datetime
+from typing import Optional, Annotated, List
 import logging
 
 logger = logging.getLogger(__name__)
@@ -169,7 +168,7 @@ async def update_profile(
         logger.error(f"Profile update error: {e}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Profile update failed"
+            detail="Profile update failed")
 
 @user_router.post("/sop/activity", response_model=dict)
 async def log_sop_activity(

@@ -237,7 +237,7 @@ async def get_user_by_id(
         logger.error(f"Get user by ID error: {e}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Failed to retrieve user"
+            detail="Failed to retrieve user")
 
 @admin_router.get("/admin/sop/activities", response_model=List[SOPActivityResponse])
 async def get_all_sop_activities(
