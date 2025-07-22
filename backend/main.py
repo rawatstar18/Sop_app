@@ -20,7 +20,7 @@ app.add_middleware(
 app.include_router(user_router)
 
 # MongoDB setup
-client = MongoClient("mongodb://localhost:27017")
+client = MongoClient("mongodb://admin:admin@localhost:27017/?authSource=admin")
 db = client["mydatabase"]
 users_collection = db["users"]
 
@@ -42,4 +42,5 @@ async def login(data: LoginRequest):
         raise HTTPException(status_code=401, detail="Invalid credentials")
     return {"message": "Login successful", "email": user["email"]}
 
-addAdminIfNotFound()
+addAdminIfNotFound(users_collection)
+

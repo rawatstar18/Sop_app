@@ -6,24 +6,24 @@ from passlib.hash import bcrypt
 
 user_router = APIRouter()
 
+
 @user_router.post("/register")
-def register(
+def register_user(
     username: str = Form(...),
     email: str = Form(...),
     password: str = Form(...)
 ):
-    existing = user_collection.find_one({"email": email})
-    if existing:
+    existing_user = user_collection.find_one({"email": email})
+    if existing_user:
         raise HTTPException(status_code=400, detail="Email already registered")
-    
-    hashed_password = bcrypt.hash(password)
-    user_data = {
+
+    new_user = {
         "username": username,
         "email": email,
-        "password": hashed_password
+        "password": bcrypt.hash(password)
     }
 
-    user_collection.insert_one(user_data)
+    user_collection.insert_one(new_user)
     return {"message": "User registered successfully"}
 
 

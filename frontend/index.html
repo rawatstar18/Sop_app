@@ -1,72 +1,100 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>User Dashboard</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login | User Manager</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      background: linear-gradient(to right, #3b82f6, #60a5fa);
+    }
+  </style>
 </head>
-<body class="bg-gray-100 text-gray-800 min-h-screen font-sans">
-  <!-- Header -->
-  <header class="bg-blue-700 text-white px-6 py-4 flex justify-between items-center shadow">
-    <div class="text-2xl font-bold">User Dashboard</div>
-    <div class="flex items-center gap-4">
-      <a href="users.html" class="bg-white text-blue-700 px-4 py-1.5 rounded hover:bg-blue-100 font-semibold transition">+ Add User</a>
-      <div class="bg-blue-800 px-3 py-1 rounded text-sm font-mono" id="clock">--:--:--</div>
-    </div>
-  </header>
+<body class="flex items-center justify-center min-h-screen text-gray-800 font-sans">
 
-  <!-- Main -->
-  <main class="p-8">
-    <div class="max-w-4xl mx-auto bg-white rounded shadow p-6">
-      <div class="flex justify-between items-center mb-6">
-        <h2 class="text-xl font-semibold text-blue-700">
-          Welcome, <span id="username-display" class="text-gray-900">Admin</span>!
-        </h2>
-        <button 
-          onclick="logout()" 
-          class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded transition"
-          title="Logout and return to login screen"
-        >
-          🔓 Logout
+  <div class="bg-white shadow-2xl rounded-2xl p-10 w-full max-w-md animate-fade-in">
+    <div class="text-center mb-8">
+      <h1 class="text-3xl font-extrabold text-blue-600 mb-2">Welcome Back</h1>
+      <p class="text-sm text-gray-500">Login with your username</p>
+    </div>
+
+    <form id="loginForm" class="space-y-6">
+      <div>
+        <label for="username" class="block text-sm font-medium mb-1">Username</label>
+        <input type="text" id="username" placeholder="e.g. sysadmin" required
+          class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
+      </div>
+
+      <div>
+        <label for="password" class="block text-sm font-medium mb-1">Password</label>
+        <input type="password" id="password" placeholder="••••••••" required
+          class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
+      </div>
+
+      <div>
+        <button type="submit"
+          class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition duration-300">
+          Login
         </button>
       </div>
+    </form>
 
-      <p class="text-lg mb-6 text-gray-700">Manage users and monitor SOP tasks using the tools below.</p>
+    <p id="errorMsg" class="text-red-500 mt-4 text-center hidden">Invalid username or password.</p>
 
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <a href="users.html" class="block bg-blue-600 text-white text-center py-3 rounded hover:bg-blue-700 transition font-medium">
-          📋 View User List
-        </a>
-        <a href="register.html" class="block bg-purple-600 text-white text-center py-3 rounded hover:bg-purple-700 transition font-medium">
-          ➕ Register New User
-        </a>
-        <a href="gift_sop.html" class="block bg-green-600 text-white text-center py-3 rounded hover:bg-green-700 transition font-medium">
-          📌 View GIFT SOP
-        </a>
-      </div>
+    <div class="mt-6 text-center text-sm text-gray-500">
+      Don’t have an account?
+      <a href="register.html" class="text-blue-600 hover:underline">Register here</a>
     </div>
-  </main>
+  </div>
 
-  <!-- Scripts -->
+  <!-- Login script -->
   <script>
-    // IST Clock
-    function updateClock() {
-      const now = new Date();
-      const options = { timeZone: 'Asia/Kolkata', hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' };
-      const timeStr = now.toLocaleTimeString('en-IN', options);
-      document.getElementById('clock').textContent = timeStr;
-    }
-    setInterval(updateClock, 1000);
-    updateClock();
+    const form = document.getElementById('loginForm');
+    const errorMsg = document.getElementById('errorMsg');
 
-    // Show logged-in username
-    const username = localStorage.getItem("username") || "Admin";
-    document.getElementById("username-display").textContent = username.charAt(0).toUpperCase() + username.slice(1);
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
 
-    // Logout function
-    function logout() {
-      localStorage.clear(); // remove all stored login info
-      window.location.href = "login.html"; // redirect to login
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value;
+
+      try {
+        const res = await fetch('http://localhost:8000/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, password })
+        });
+
+        if (res.ok) {
+          window.location.href = 'dashboard.html'; // ✅ Updated redirect
+        } else {
+          errorMsg.classList.remove('hidden');
+        }
+      } catch (err) {
+        console.error('Login error:', err);
+        errorMsg.textContent = "Server error. Please try again later.";
+        errorMsg.classList.remove('hidden');
+      }
+    });
+  </script>
+
+  <!-- Tailwind custom animation -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          animation: {
+            'fade-in': 'fadeIn 0.6s ease-out both'
+          },
+          keyframes: {
+            fadeIn: {
+              '0%': { opacity: 0, transform: 'translateY(20px)' },
+              '100%': { opacity: 1, transform: 'translateY(0)' }
+            }
+          }
+        }
+      }
     }
   </script>
 </body>

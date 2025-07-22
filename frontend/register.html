@@ -37,7 +37,7 @@
 
         <p class="mt-4 text-sm text-center text-gray-500">
             Already have an account?
-            <a href="login.html" class="text-blue-500 hover:underline">Login here</a>
+            <a href="index.html" class="text-blue-500 hover:underline">Login here</a>
         </p>
     </div>
 
@@ -59,7 +59,7 @@
 
             if (response.ok) {
                 alert(data.message);
-                window.location.href = "login.html";  // redirect after success
+                window.location.href = "index.html";  // redirect after success
             } else {
                 alert(data.detail || "Registration failed");
             }

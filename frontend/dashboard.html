@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>SOP Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 text-gray-800 min-h-screen font-sans">
+  <!-- Header -->
+  <header class="bg-blue-700 text-white px-6 py-4 flex justify-between items-center shadow">
+    <div class="text-2xl font-bold">SOP Dashboard</div>
+    <div class="flex items-center gap-4">
+      <div class="bg-blue-800 px-3 py-1 rounded text-sm font-mono" id="clock">--:--:--</div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="p-8">
+    <div class="max-w-4xl mx-auto bg-white rounded shadow p-6">
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-xl font-semibold text-blue-700">
+          Welcome, <span id="username-display" class="text-gray-900">Admin</span>!
+        </h2>
+        <button 
+          onclick="logout()" 
+          class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded transition"
+          title="Logout and return to login screen"
+        >
+          🔓 Logout
+        </button>
+      </div>
+
+      <p class="text-lg mb-6 text-gray-700">Manage users and monitor SOP tasks using the tools below.</p>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <a href="gift_sop.html" class="block bg-green-600 text-white text-center py-3 rounded hover:bg-green-700 transition font-medium">
+          📌 View GIFT SOP
+        </a>
+      </div>
+    </div>
+  </main>
+
+  <!-- Scripts -->
+  <script>
+    // Live IST Clock
+    function updateClock() {
+      const now = new Date();
+      const options = { timeZone: 'Asia/Kolkata', hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' };
+      const timeStr = now.toLocaleTimeString('en-IN', options);
+      document.getElementById('clock').textContent = timeStr;
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    // Show logged-in username from localStorage
+    const username = localStorage.getItem("username") || "Admin";
+    document.getElementById("username-display").textContent = username.charAt(0).toUpperCase() + username.slice(1);
+
+    // Logout handler
+    function logout() {
+      localStorage.clear();
+      window.location.href = "index.html"; // ✅ Updated from login.html to index.html
+    }
+  </script>
+</body>
+</html>

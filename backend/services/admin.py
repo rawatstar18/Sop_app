@@ -2,14 +2,11 @@ from backend.models import User
 from backend.database import user_collection
 from passlib.hash import bcrypt
 
-def addAdminIfNotFound():
+def addAdminIfNotFound(user_collection):
     existing_admin = user_collection.find_one({"username": "sysadmin"})
     if not existing_admin:
-        admin_user = User(
-            name="System Admin",
-            username="sysadmin",
-            email="admin@admin.com",
-            password=bcrypt.hash("systemadmin")
-        )
-        user_collection.insert_one(admin_user.dict())
-        print("✅ Default admin user 'sysadmin' created")
+        user_collection.insert_one({
+            "username": "sysadmin",
+            "password": "your_hashed_password",  # hash if needed
+            "role": "admin"
+        })
