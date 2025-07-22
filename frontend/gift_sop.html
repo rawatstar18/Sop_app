@@ -5,7 +5,24 @@
   <title>GIFT SOP Checklist</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-50 font-sans p-6">
+
+<!-- Header with Home Button -->
+<div class="max-w-4xl mx-auto mb-6 px-4 sm:px-0">
+  <div class="flex flex-col sm:flex-row justify-between items-center bg-white border border-blue-100 rounded-lg shadow-sm p-4">
+    
+    <!-- Home Button -->
+    <a href="dashboard.html" class="inline-flex items-center text-blue-600 hover:text-blue-800 font-semibold transition duration-200">
+      </svg>
+      🏠 Back to Dashboard
+    </a>
+
+    <!-- Last Updated Tag -->
+    <span class="mt-2 sm:mt-0 inline-flex items-center bg-blue-50 text-blue-700 text-xs font-medium px-3 py-1 rounded-full border border-blue-200">
+      ⏱️ Last updated: <time datetime="2025-07-22" class="ml-1 font-semibold">July 22, 2025</time>
+    </span>
+  </div>
+</div>
+
   <div class="max-w-4xl mx-auto bg-white p-6 rounded-lg shadow-lg">
     <h1 class="text-3xl font-bold text-blue-600 mb-6 text-center">📋 GIFT SOP Checklist</h1>
 
@@ -13,8 +30,8 @@
     <div class="mb-6">
       <h2 class="text-xl font-semibold mb-2">🕒 Daily Runs</h2>
       <div class="space-y-2">
-        <label class="flex items-center"><input type="checkbox" class="mr-2"> DAG: <b>gift_daily_data_appends</b> ran at 3:15 am on <b>192.168.0.121:8083</b></label>
-        <label class="flex items-center"><input type="checkbox" class="mr-2"> DAG: <b>gift_daily_data_appends</b> ran at 5:15 am</label>
+        <label class="flex items-center hover:bg-blue-50 p-2 rounded"><input type="checkbox" class="mr-2"> DAG: <b>gift_daily_data_appends</b> ran at 3:15 am on <b>192.168.0.121:8083</b></label>
+        <label class="flex items-center hover:bg-blue-50 p-2 rounded"><input type="checkbox" class="mr-2"> DAG: <b>gift_daily_data_appends</b> ran at 5:15 am</label>
       </div>
     </div>
 
@@ -22,8 +39,8 @@
     <div class="mb-6">
       <h2 class="text-xl font-semibold mb-2">🕕 6:00 AM Tasks</h2>
       <div class="space-y-2">
-        <label class="flex items-center"><input type="checkbox" class="mr-2"> GIFT Production Module initialized alert received on Google Space</label>
-        <label class="flex items-center"><input type="checkbox" class="mr-2"> No unexpected strategy removal logs present on Google Space</label>
+        <label class="flex items-center hover:bg-green-50 p-2 rounded"><input type="checkbox" class="mr-2"> GIFT Production Module initialized alert received on Google Space</label>
+        <label class="flex items-center hover:bg-green-50 p-2 rounded"><input type="checkbox" class="mr-2"> No unexpected strategy removal logs present on Google Space</label>
       </div>
     </div>
 
@@ -31,17 +48,17 @@
     <div class="mb-6">
       <h2 class="text-xl font-semibold mb-2">🕡 6:30 AM Tasks</h2>
       <div class="space-y-2">
-        <label class="flex items-center"><input type="checkbox" class="mr-2"> 3 nodes of <b>startDatasnap</b> DAG running (Airflow: 192.168.30.15:18080)</label>
-        <label class="flex items-center"><input type="checkbox" class="mr-2"> 2 nodes of <b>start_scripts</b> DAG running</label>
-        <label class="flex items-center"><input type="checkbox" class="mr-2"> ⚠️ Alert: TraderID 398 logged in on 192.168.30.15 received on Teams</label>
-        <label class="flex items-center"><input type="checkbox" class="mr-2"> 📊 Check Grafana: Time difference from current should be ~3hrs</label>
+        <label class="flex items-center hover:bg-yellow-50 p-2 rounded"><input type="checkbox" class="mr-2"> 3 nodes of <b>startDatasnap</b> DAG running (Airflow: 192.168.30.15:18080)</label>
+        <label class="flex items-center hover:bg-yellow-50 p-2 rounded"><input type="checkbox" class="mr-2"> 2 nodes of <b>start_scripts</b> DAG running</label>
+        <label class="flex items-center hover:bg-yellow-50 p-2 rounded"><input type="checkbox" class="mr-2"> ⚠️ Alert: TraderID 398 logged in on 192.168.30.15 received on Teams</label>
+        <label class="flex items-center hover:bg-yellow-50 p-2 rounded"><input type="checkbox" class="mr-2"> 📊 Check Grafana: Time difference from current should be ~3hrs</label>
       </div>
     </div>
 
     <!-- Section: 4:30 PM -->
     <div class="mb-6">
       <h2 class="text-xl font-semibold mb-2">🕟 4:30 PM Tasks</h2>
-      <label class="flex items-center"><input type="checkbox" class="mr-2"> ⚠️ Alert: TraderID 398 logged in on 192.168.30.15 received on Teams</label>
+      <label class="flex items-center hover:bg-red-50 p-2 rounded"><input type="checkbox" class="mr-2"> ⚠️ Alert: TraderID 398 logged in on 192.168.30.15 received on Teams</label>
     </div>
 
     <!-- Section: Alerts -->
@@ -66,5 +83,10 @@
       </ul>
     </div>
   </div>
+
+  <!-- Footer Fun Message -->
+  <footer class="text-center text-sm text-gray-500 mt-8">
+    🎯 You're doing great! Keep crushing your SOPs like a pro! 🚀
+  </footer>
 </body>
 </html>
